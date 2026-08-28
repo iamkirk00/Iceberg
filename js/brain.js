@@ -7,6 +7,13 @@ const GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions';
 const EMOTE_LIST = 'wave, laugh, think, shrug, excited, nod, sigh, smile, surprised, sad, determined';
 
 export const PROVIDERS = {
+  home: {
+    label: 'Family server',
+    keyHint: '',
+    consoleUrl: '',
+    serverSide: true,
+    models: [{ id: 'family', label: "The family server's own AI — no key needed here" }],
+  },
   anthropic: {
     label: 'Anthropic',
     keyHint: 'sk-ant-…',
@@ -34,7 +41,7 @@ export function defaultModel(provider) {
 }
 
 // ---------- system prompt ----------
-export function buildSystemPrompt(char, otherChar, mode = 'user') {
+export function buildSystemPrompt(char, otherChar, mode = 'user', todayBlock = '') {
   const memories = (char.memories || [])
     .map((m) => `- ${m.title}: ${m.text}`)
     .join('\n');
@@ -68,6 +75,17 @@ CONVERSATION STYLE:
 - Build on the running conversation. A callback to something they said earlier beats introducing a new topic or story.
 - Don't force your memories or penguin metaphors into replies. When one truly fits, it lands; otherwise skip it and just talk.
 
+${todayBlock ? `
+WHAT IS ACTUALLY HAPPENING AT HOME TODAY (live from the family's board — real facts about real people):
+${todayBlock}
+
+USING THE BOARD:
+- When you're asked about today, dinner, the schedule, intentions, or a vote, answer from the board above and get it RIGHT. Names, times and titles exactly as written.
+- Never invent a plan, a time, or a person that isn't listed. If it isn't on the board, say so plainly — in your own voice.
+- Stay yourself while you do it: you're a friend reading the family's board out loud, not an assistant reciting a calendar.
+- Never nag about intentions and never rank anyone. Choosing is the whole point; not-yet-chosen is not a failure.
+- You never settle family disagreements — if something is contested, point them at the family vote.
+` : ''}
 RULES:
 - Stay in character always.
 - Keep replies SHORT: 1–3 sentences usually, 4 max. This is a conversation, not an essay.
